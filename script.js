@@ -1,48 +1,64 @@
-var image = document.getElementById('catImage');
-var clicks = document.getElementById('numClicks');
+$(function(){
 
-var namesArray = ['Cat 0','Cat 1','Cat 2', 'Cat 3', 'Cat 4']
-var clicksArray = [0,0,0,0,0];
+  // model holds the data for cat names and number of clicks for each cat
+  var model = {
+    catNames: ['Cat 0','Cat 1','Cat 2', 'Cat 3', 'Cat 4'],
+    catClicks: [0,0,0,0,0]
+  };
 
-// initialize cat list with cat names from namesArray
-for (var i = 0; i < namesArray.length; i++) {
-	var idString = 'catLink' + i;
-	var catLink = document.getElementById(idString)
-	catLink.innerHTML = namesArray[i]
-};
+  // octopus is the controller, which communicates b/w view and model
+  var octopus = {
+    init: function() {
+        view.init();
+    }
+    updateCatClicks: function(catNumber) {
+      model.catClicks[catNumber] += 1;
+    },
+  };
 
-image.addEventListener('click', function(id) {
-	var clicksCount = document.getElementById('numClicks').innerHTML;
-	document.getElementById('numClicks').innerHTML = parseInt(clicksCount) + 1
-	var numString = image.src.substr(image.src.length - 5);
-	var myNumber = numString.split('.')[0];
-	clicksArray[myNumber] += 1;
-}, false);
+  // view handles all of the view interaction
+  var view = {
+    // setup the view and listeners
+    init: function() {
+      // add cat links to list based on cat names
+      var image = document.getElementById('catImage');
+      for (var i = 0; i < model.catNames.length; i++) {
+        var idString = 'catLink' + i;
+        var catLink = document.getElementById(idString)
+        catLink.innerHTML = model.catNames[i]
+      };
 
+      // add the cat view image listener for updating the number of clicks
+      image.addEventListener('click', function(id) {
+        var numString = image.src.substr(image.src.length - 5);
+        var myNumber = numString.split('.')[0];
+        octopus.updateCatClicks(myNumber); // go through controller to edit model data
+        var clicks = document.getElementById('numClicks');
+        clicks.innerHTML = model.catClicks[myNumber];
+      }, false);
 
-var nums = [0,1,2,3,4];
+      // add event listener to each cat name link
+      // use IFFE to be careful of closures
+      for (var i = 0; i < model.catNames.length; i++) {
+        var elem = document.getElementById('catLink' + i);
+        // IFFE
+        elem.addEventListener('click', (function(iCopy) {
+            return function() {
+              view.renderCat(iCopy);
+            };
+        })(i));
+      };
+      view.renderCat(0); // render the first cat on launch
+    },
+    // this function renders the cat detail view based on the cat that was clicked in the list
+    renderCat: function(catNumber) {
+      var image = document.getElementById('catImage');
+      var clicks = document.getElementById('numClicks');
+      document.getElementById('catName').innerHTML = model.catNames[catNumber];
+      image.src = "cat" + catNumber + ".jpg"
+      clicks.innerHTML = model.catClicks[catNumber];
+    }
+  };
 
-for (var i = 0; i < nums.length; i++) {
-
-    // This is the number we're on...
-    var num = nums[i];
-    var elem = document.getElementById('catLink' + nums[i]);
-    // ... and when we click, alert the value of `num`
-    // IFFE
-    elem.addEventListener('click', (function(numCopy) {
-        return function() {
-            image.src = "cat" + numCopy + ".jpg"
-            clicks.innerHTML = clicksArray[numCopy];
-            document.getElementById('catName').innerHTML = namesArray[numCopy];
-        };
-    })(num));
-};
-
-
-
-
-
-// $('#catImage').click(function(e) {
-// 	// var clicksCount = $('#numClicks').text();
-// 	$('#numClicks').text(parseInt($('#numClicks').text()) + 1);
-// });
+  octopus.init();// start aplication by calling controller init function
+});
