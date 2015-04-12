@@ -3,8 +3,9 @@ $(function(){
   // model holds the data for cat names and number of clicks for each cat
   var model = {
     catNames: ['Cat 0','Cat 1','Cat 2', 'Cat 3', 'Cat 4'],
-    catClicks: [0,0,0,0,0]
-    // could add image source in here
+    catClicks: [0,0,0,0,0],
+    imagePath: ['cat0.jpg','cat1.jpg','cat2.jpg','cat3.jpg','cat4.jpg']
+    adminVisible: false
   };
 
   // octopus is the controller, which communicates b/w view and model
@@ -23,6 +24,13 @@ $(function(){
     },
     getCatNamesLength: function() {
       return model.catNames.length;
+    },
+    toggleAdminPanel: function(argument) {
+      $('#formDiv').toggle();
+      // document.getElementById('formDiv').style.display = 'block';
+    },
+    updateCatInfo: function(argument) {
+      // body...
     }
   };
 
@@ -32,6 +40,7 @@ $(function(){
     init: function() {
       // add cat links to list based on cat names
       var image = document.getElementById('catImage');
+      var adminButton = document.getElementById('admin');
       // var image = document.getElementById('catImage');
       for (var i = 0; i < octopus.getCatNamesLength(); i++) {
         var idString = 'catLink' + i;
@@ -59,6 +68,12 @@ $(function(){
             };
         })(i));
       };
+
+      // add listener to admin button
+      adminButton.addEventListener('click', function() {
+        octopus.showAdminPanel();
+      }, false);
+
       view.renderCat(0); // render the first cat on launch
     },
     // this function renders the cat detail view based on the cat that was clicked in the list
