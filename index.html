@@ -30,13 +30,19 @@
 		</div>
 	</div>
 	<div id="catsDisplay">
-		<h4 id="catName">Cat 0</h4>
-		<img id="catImage" src="cat1.jpg" alt="cute cat">
-		<p>Number of clicks: </p><p id="numClicks">0</p>
+		<h3 id="catName" data-bind="text: name"></h3>
+		<h4 id="catLevel" data-bind="text: catLevel"></h4>
+		<img id="catImage" src="cat1.jpg" alt="cute cat" data-bind="click: incrementCounter">
+		<p>Number of clicks: </p><p id="numClicks" data-bind="text: clickCount">0</p>
+		<h4 id="nicknamesTitle">NickNames</h4>
+		<ul data-bind="foreach: catNickNames">
+			<li data-bind="text: nickname"></li>
+		</ul>
 	</div>
 
 
 </body>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.3.0/knockout-min.js"></script>
 <script src="script.js"></script>
 </html>
